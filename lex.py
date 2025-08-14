@@ -26,9 +26,10 @@ class Lexer:
     def abort(self, message):
         sys.exit("Lexing error. " + message)
 
-    # skip whitespaces excpet newlines, which we will use to indicate the end of a statement
+    # skip whitespaces except newlines, which we will use to indicate the end of a statement
     def skipWhitespace(self):
-        pass
+        while self.curChar == ' ' or self.curChar == '\t' or self.curChar == '\r':
+            self.nextChar()
 
     # skip comments in the code
     def skipComments(self):
@@ -36,6 +37,7 @@ class Lexer:
 
     # return the next token
     def getToken(self):
+        self.skipWhitespace()
         token = None
 
         # check the first character of this toke to see if we can decide what it is
