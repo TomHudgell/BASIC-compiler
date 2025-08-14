@@ -88,6 +88,20 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.NOTEQ)
             else:
                 self.abort("Expected !=, got !" + self.peek())
+        elif self.curChar == '\"':
+            # get characters between quotations
+            self.nextChar()
+            startPos = self.curPos
+
+            while self.curChar != '\"':
+                # don't allow special characters - no escape chars, newlines, tabs, or %
+                # will be using C's printf
+                if self.curChar == '\r' or self.curChar == '\n' or self.curChar == '\t' or self.curChar == '\\' or self.curChar == '%':
+                    self.abort("Illegal character in string.")
+                self.nextChar()
+            
+            tokText = self.source[startPos : self.curPos] # get substring
+            token = Token(tokText, TokenType.STRING)
         else:
             self.abort("Unknown token: " + self.curChar)  # unknown token
 
