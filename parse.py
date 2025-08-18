@@ -3,8 +3,9 @@ from lex import *
 
 # parser object keeps track of current token and checks if code matches the grammar
 class Parser:
-    def __init__(self, lexer):
+    def __init__(self, lexer, emitter):
         self.lexer = lexer
+        self.emitter = emitter
 
         self.symbols = set()  # variables declared so far
         self.labelsDeclared = set()  # labels declared so far
