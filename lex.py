@@ -57,6 +57,7 @@ class Lexer:
             token = Token(self.curChar, TokenType.NEWLINE)
         elif self.curChar == '\0':
             token = Token('', TokenType.EOF)
+
         elif self.curChar == '=':
             # check if this is = or ==
             if self.peek() == '=':
@@ -65,6 +66,7 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.EQEQ)
             else:
                 token = Token(self.curChar, TokenType.EQ)
+
         elif self.curChar == '>':
             # check if this is > or >=
             if self.peek() == '=':
@@ -73,6 +75,7 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.GTEQ)
             else:
                 token = Token(self.curChar, TokenType.GT)
+
         elif self.curChar == '<':
             # check if this is < or <=
             if self.peek() == '=':
@@ -81,6 +84,7 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.LTEQ)
             else:
                 token = Token(self.curChar, TokenType.LT)
+
         elif self.curChar == '!':
             if self.peek() == '=':
                 lastChar = self.curChar
@@ -88,6 +92,7 @@ class Lexer:
                 token = Token(lastChar + self.curChar, TokenType.NOTEQ)
             else:
                 self.abort("Expected !=, got !" + self.peek())
+
         elif self.curChar == '\"':
             # get characters between quotations
             self.nextChar()
@@ -102,6 +107,7 @@ class Lexer:
             
             tokText = self.source[startPos : self.curPos] # get substring
             token = Token(tokText, TokenType.STRING)
+
         elif self.curChar.isdigit():
             # leading character is a digit so this must be a number
             # get all consecutive digits and decimal if there is one
@@ -119,6 +125,7 @@ class Lexer:
             
             tokText = self.source[startPos : self.curPos + 1]  # get substring
             token = Token(tokText, TokenType.NUMBER)
+
         elif self.curChar.isalpha():
             # leading character is a letter so this must be an identifier or keyword
             # get all consecutive alphanumeric characters
@@ -133,6 +140,7 @@ class Lexer:
                 token = Token(tokText, TokenType.IDENT)
             else:  # keyword
                 token = Token(tokText, keyword)
+                
         else:
             self.abort("Unknown token: " + self.curChar)  # unknown token
 
