@@ -1,1 +1,3 @@
-PRINT "Hello world!"
+LABEL loop
+PRINT "hello, world!"
+GOTO loop

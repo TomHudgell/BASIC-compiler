@@ -59,6 +59,65 @@ class Parser:
                 # expect an expression
                 self.expression()
         
+        # "IF" comparison "THEN" {statement} "ENDIF"
+        elif self.checkToken(TokenType.IF):
+            print("STATEMENT-IF")
+            self.nextToken()
+            self.comparison()
+
+            self.match(TokenType.THEN)
+            self.nl()
+
+            # zero or more statements in the body
+            while not self.checkToken(TokenType.ENDIF):
+                self.statement()
+
+            self.match(TokenType.ENDIF)
+
+        # "WHILE" comparison "REPEAT" {statement} "ENDWHILE"
+        elif self.checkToken(TokenType.WHILE):
+            print("STATEMENT-WHILE")
+            self.nextToken()
+            self.comparison()
+
+            self.match(TokenType.REPEAT)
+            self.nl()
+
+            # zero or more statements in the body
+            while not self.checkToken(TokenType.ENDWHILE):
+                self.statement()
+
+            self.match(TokenType.ENDWHILE)
+
+        # "LABEL" ident
+        elif self.checkToken(TokenType.LABEL):
+            print("STATEMENT-LABEL")
+            self.nextToken()
+            self.match(TokenType.IDENT)
+
+        # "GOTO" ident
+        elif self.checkToken(TokenType.GOTO):
+            print("STATEMENT-GOTO")
+            self.nextToken()
+            self.match(TokenType.IDENT)
+
+        # "LET" ident "=" expression
+        elif self.checkToken(TokenType.LET):
+            print("STATEMENT-LET")
+            self.nextToken()
+            self.match(TokenType.IDENT)
+            self.match(TokenType.EQ)
+            self.expression()
+
+        # "INPUT" ident
+        elif self.checkToken(TokenType.INPUT):
+            print("STATEMENT-INPUT")
+            self.nextToken()
+            self.match(TokenType.IDENT)
+
+        else:  # this is not a valid statement
+            self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
+        
         self.nl()  # newline
 
     # nl ::= '\n'+
