@@ -40,6 +40,10 @@ class Parser:
     def program(self):
         print("PROGRAM")
 
+        # since some newlines are required in our grammar, need to skip the excess
+        while self.checkToken(TokenType.NEWLINE):
+            self.nextToken()
+
         # parse all the statements in the program
         while not self.checkToken(TokenType.EOF):
             self.statement()
@@ -119,6 +123,65 @@ class Parser:
             self.abort("Invalid statement at " + self.curToken.text + " (" + self.curToken.kind.name + ")")
         
         self.nl()  # newline
+
+    # return true if the current token is a comparison operator
+    def isComparisonOperator(self):
+        return self.checkToken(TokenType.EQEQ) or self.checkToken(TokenType.NOTEQ) or self.checkToken(TokenType.GT) or self.checkToken(TokenType.GTEQ) or self.checkToken(TokenType.LT) or self.checkToken(TokenType.LTEQ)
+
+    # comparison ::= expression (("==" | "!=" | ">" | ">=" | "<" | "<=") expression)+
+    def comparison(self):
+        print("COMPARISON")
+
+        self.expression()
+        # must be at least one comparison operator and another expression
+        if self.isComparisonOperator():
+            self.nextToken()
+            self.expression()
+        else:
+            self.abort("Expected comparison operator at: " + self.curToken.text)
+
+        # can have 0 or more comparison operators and expressions
+        while self.isComparisonOperator():
+            self.nextToken()
+            self.expression()
+
+    # expression ::= term {( "-" | "+" ) term}
+    def expression(self):
+        print("EXPRESSION")
+
+        self.term()
+        # can have 0 or more -/+ and expressions
+        while self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
+            self.nextToken()
+            self.term()
+
+    # term ::= unary {( "/" | "*" ) unary}
+    def term(self):
+        print("TERM")
+
+        self.unary()
+        # can have 0 or more *// and unaries
+        while self.checkToken(TokenType.SLASH) or self.checkToken(TokenType.ASTERISK):
+            self.nextToken()
+            self.unary()
+
+    # unary ::= [ "+" | "-" ] primary
+    def unary(self):
+        print("UNARY")
+
+        # optional unary +/-
+        if self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
+            self.nextToken()
+        self.primary()
+
+    # primary ::= number | ident
+    def primary(self):
+        print("PRIMARY (" + self.curToken.text + ")")
+
+        if self.checkToken(TokenType.NUMBER) or self.checkToken(TokenType.IDENT):
+            self.nextToken()
+        else:
+            self.abort("Unexpected token at: " + self.curToken.text)
 
     # nl ::= '\n'+
     def nl(self):
