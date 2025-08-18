@@ -119,6 +119,20 @@ class Lexer:
             
             tokText = self.source[startPos : self.curPos + 1]  # get substring
             token = Token(tokText, TokenType.NUMBER)
+        elif self.curChar.isalpha():
+            # leading character is a letter so this must be an identifier or keyword
+            # get all consecutive alphanumeric characters
+            startPos = self.curPos
+            while self.peek().isalnum():
+                self.nextChar()
+
+            # check if the token is in the list of keywords
+            tokText = self.source[startPos : self.curPos + 1]
+            keyword = Token.checkIfKeyword(tokText)
+            if keyword == None:  # identifier
+                token = Token(tokText, TokenType.IDENT)
+            else:  # keyword
+                token = Token(tokText, keyword)
         else:
             self.abort("Unknown token: " + self.curChar)  # unknown token
 
@@ -131,6 +145,14 @@ class Token:
     def __init__(self, tokenText, tokenKind):
         self.text = tokenText  # used for identifies, strings, numbers
         self.kind = tokenKind
+
+    @staticmethod
+    def checkIfKeyword(tokenText):
+        for kind in TokenType:
+            # relies on all keyword enum values being 1XX
+            if kind.name == tokenText and kind.value >= 100 and kind.value < 200:
+                return kind
+        return None
 
 # enum for all the types of tokens
 class TokenType(enum.Enum):
