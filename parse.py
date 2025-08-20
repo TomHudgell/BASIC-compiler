@@ -177,11 +177,10 @@ class Parser:
 
     # comparison ::= expression (("==" | "!=" | ">" | ">=" | "<" | "<=") expression)+
     def comparison(self):
-        print("COMPARISON")
-
         self.expression()
         # must be at least one comparison operator and another expression
         if self.isComparisonOperator():
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
             self.expression()
         else:
@@ -189,56 +188,53 @@ class Parser:
 
         # can have 0 or more comparison operators and expressions
         while self.isComparisonOperator():
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
             self.expression()
 
     # expression ::= term {( "-" | "+" ) term}
     def expression(self):
-        print("EXPRESSION")
-
         self.term()
         # can have 0 or more -/+ and expressions
         while self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
             self.term()
 
     # term ::= unary {( "/" | "*" ) unary}
     def term(self):
-        print("TERM")
-
         self.unary()
         # can have 0 or more *// and unaries
         while self.checkToken(TokenType.SLASH) or self.checkToken(TokenType.ASTERISK):
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
             self.unary()
 
     # unary ::= [ "+" | "-" ] primary
     def unary(self):
-        print("UNARY")
-
         # optional unary +/-
         if self.checkToken(TokenType.PLUS) or self.checkToken(TokenType.MINUS):
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
         self.primary()
 
     # primary ::= number | ident
     def primary(self):
-        print("PRIMARY (" + self.curToken.text + ")")
-
         if self.checkToken(TokenType.NUMBER):
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
         elif self.checkToken(TokenType.IDENT):
             # ensure the variable exists
             if self.curToken.text not in self.symbols:
                 self.abort("Referencing variable before assignment: " + self.curToken.text)
+
+            self.emitter.emit(self.curToken.text)
             self.nextToken()
         else:
             self.abort("Unexpected token at: " + self.curToken.text)
 
     # nl ::= '\n'+
     def nl(self):
-        print("NEWLINE")
-
         # require at least one newline
         self.match(TokenType.NEWLINE)
         # and allow extra newlines
