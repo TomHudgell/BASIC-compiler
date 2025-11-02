@@ -1,0 +1,4 @@
+LET a = 3 + 4 * 5
+LET b = ((3 + 4) * 5)
+PRINT a
+PRINT b

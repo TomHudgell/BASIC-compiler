@@ -218,7 +218,7 @@ class Parser:
             self.nextToken()
         self.primary()
 
-    # primary ::= number | ident
+    # primary ::= number | ident | (expression)
     def primary(self):
         if self.checkToken(TokenType.NUMBER):
             self.emitter.emit(self.curToken.text)
@@ -230,6 +230,12 @@ class Parser:
 
             self.emitter.emit(self.curToken.text)
             self.nextToken()
+        elif self.checkToken(TokenType.OB):
+            self.emitter.emit(self.curToken.text)
+            self.nextToken()
+            self.expression()
+            self.emitter.emit(self.curToken.text)
+            self.match(TokenType.CB)
         else:
             self.abort("Unexpected token at: " + self.curToken.text)
 

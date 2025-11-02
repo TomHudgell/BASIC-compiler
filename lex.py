@@ -43,7 +43,7 @@ class Lexer:
         self.skipComments()
         token = None
 
-        # check the first character of this toke to see if we can decide what it is
+        # check the first character of this token to see if we can decide what it is
         # if it is a multiple character token then we will continue processing
         if self.curChar == '+':
             token = Token(self.curChar, TokenType.PLUS)
@@ -53,6 +53,10 @@ class Lexer:
             token = Token(self.curChar, TokenType.ASTERISK)
         elif self.curChar == '/':
             token = Token(self.curChar, TokenType.SLASH)
+        elif self.curChar == '(':
+            token = Token(self.curChar, TokenType.OB)
+        elif self.curChar == ')':
+            token = Token(self.curChar, TokenType.CB)
         elif self.curChar == '\n':
             token = Token(self.curChar, TokenType.NEWLINE)
         elif self.curChar == '\0':
@@ -195,3 +199,5 @@ class TokenType(enum.Enum):
     LTEQ = 209
     GT = 210
     GTEQ = 211
+    OB = 212
+    CB = 213
